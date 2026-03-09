@@ -44,3 +44,5 @@ Thumbs.db
 !report/*.pdf
 !report/*.png
 !report/*.md
+# Allow result images in results/ to be tracked
+!results/*.png

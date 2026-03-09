@@ -40,7 +40,8 @@ See [database_discriptions.md](database_discriptions.md) for more dataset detail
 |------|-------------|
 | **notebooks/** | Jupyter notebooks: `ucm_fl_final.ipynb` (UC Merced), `colab_fed.ipynb`, `favg_eurosat.ipynb`. |
 | **scripts/** | Python scripts: `newfed.py`, `newfed1.py` (NWPU-RESISC45 FL with checkpointing). |
-| **report/** | Report and results: add your report PDF, `RESULTS.md` summary, and result plots/images here. |
+| **report/** | Report: add your report PDF here. |
+| **results/** | Result images (`.png`): accuracy plots, per-client accuracy, communication cost, etc. |
 | **models/** | Trained model checkpoints (`.pth`): add best checkpoints here to share on GitHub. |
 | **requirements.txt** | Python dependencies. |
 | **database_discriptions.md** | Short descriptions of supported datasets. |
