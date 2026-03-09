@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model checkpoints & large binaries (don't push to GitHub)
+*.pth
+*.pt
+*.zip
+
+# Data (too large for GitHub; use Git LFS or document download steps)
+data/
+UCMerced_LandUse/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Generated images and documents
+*.png
+*.pdf

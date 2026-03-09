@@ -1,0 +1,14 @@
+# Federated Learning - Remote Sensing (UC Merced / NWPU-RESISC45)
+# Python 3.8+
+
+# Core ML
+torch>=2.0.0
+torchvision>=0.15.0
+torchmetrics>=1.0.0
+
+# Data & plotting
+numpy>=1.21.0
+matplotlib>=3.5.0
+
+# Optional: progress bars (used in some notebooks; commented out if not needed)
+# tqdm>=4.64.0
