@@ -22,6 +22,9 @@ ENV/
 *.pth
 *.pt
 *.zip
+# Allow checkpoints in models/ to be tracked
+!models/*.pth
+!models/*.pt
 
 # Data (too large for GitHub; use Git LFS or document download steps)
 data/
@@ -34,6 +37,10 @@ UCMerced_LandUse/
 .DS_Store
 Thumbs.db
 
-# Generated images and documents
+# Generated images and documents (root only)
 *.png
 *.pdf
+# Allow report & results in report/ to be tracked
+!report/*.pdf
+!report/*.png
+!report/*.md
