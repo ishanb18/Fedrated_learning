@@ -1,92 +1,188 @@
-# Federated Learning for Remote Sensing
+# Federated Learning for Remote Sensing Image Classification
 
-Simulation of **Federated Learning (FedAvg)** on aerial/satellite image classification using PyTorch. The project supports the **UC Merced Land Use** dataset (21 classes) and **NWPU-RESISC45** (45 classes), with optional checkpointing and full metrics (Accuracy, F1, AUC).
+This project implements a **Federated Learning framework for remote sensing image classification** using a lightweight Convolutional Neural Network (CNN).  
+The system allows multiple clients to collaboratively train a global model **without sharing their raw data**, preserving data privacy while maintaining strong performance.
 
-## Features
+---
 
-- **Federated Averaging (FedAvg)** — clients train locally; server aggregates model updates
-- **IID data partition** — training data split across simulated clients
-- **Metrics** — global Accuracy, macro F1, and macro AUC on a held-out test set
-- **Checkpointing** — save and resume training (supported in main scripts)
-- **Plots** — global metrics vs. rounds, per-client accuracy, cumulative communication cost
+# Project Overview
 
-## Requirements
+Remote sensing imagery is widely used in applications such as:
 
-- Python 3.8+
-- PyTorch 2.x (CPU or CUDA)
-- See [requirements.txt](requirements.txt) for full dependencies
+- Environmental monitoring
+- Land use classification
+- Disaster management
+- Agricultural analysis
 
-```bash
-pip install -r requirements.txt
-```
+Traditional machine learning approaches require **centralized datasets**, which can introduce issues such as:
 
-For GPU support, install PyTorch with CUDA from [pytorch.org](https://pytorch.org/get-started/locally/), then install the rest of the requirements.
+- Data privacy concerns
+- High communication cost
+- Data ownership restrictions
+- Storage limitations
 
-## Datasets
+**Federated Learning (FL)** solves these challenges by allowing distributed clients to train models locally while sharing only model parameters with a central server.
 
-| Dataset | Classes | Notes |
-|--------|---------|--------|
-| **UC Merced Land Use** | 21 | Single folder of class subdirs (e.g. `UCMerced_LandUse/Images/`). Scripts split train/test internally. |
-| **NWPU-RESISC45** | 45 | Expects `train/` and `test/` folders under e.g. `data/NWPU-RESISC45/`. |
+The server aggregates these updates to build a **global model that benefits from all clients’ knowledge without accessing their data.**
 
-- **UC Merced**: [UCMerced Dataset](http://weegee.vision.ucmerced.edu/datasets/UCMerced_LandUse.html) — 2,100 images, 256×256.
-- **NWPU-RESISC45**: Place the dataset so that `data/NWPU-RESISC45/train` and `data/NWPU-RESISC45/test` exist, each with one subfolder per class.
+---
 
-See [database_discriptions.md](database_discriptions.md) for more dataset details.
+# Key Features
 
-## Project Structure
+- Federated Learning implementation using **FedAvg**
+- Lightweight **CNN architecture**
+- Support for **multiple remote sensing datasets**
+- Simulation of **non-IID data distribution**
+- Performance evaluation using:
+  - Accuracy
+  - F1 Score
+  - AUC
+  - Communication Cost
 
-| Path | Description |
-|------|-------------|
-| **notebooks/** | Jupyter notebooks: `ucm_fl_final.ipynb` (UC Merced), `colab_fed.ipynb`, `favg_eurosat.ipynb`. |
-| **scripts/** | Python scripts: `newfed.py`, `newfed1.py` (NWPU-RESISC45 FL with checkpointing). |
-| **report/** | Report: add your report PDF here. |
-| **results/** | Result images (`.png`): accuracy plots, per-client accuracy, communication cost, etc. |
-| **models/** | Trained model checkpoints (`.pth`): add best checkpoints here to share on GitHub. |
-| **requirements.txt** | Python dependencies. |
-| **database_discriptions.md** | Short descriptions of supported datasets. |
+---
 
-## How to Run
+# Datasets
 
-### UC Merced (notebook)
+The project evaluates federated learning across three popular remote sensing datasets.
 
-1. Place the UC Merced dataset so that the path to the **Images** folder (with 21 class subfolders) is correct in the notebook (e.g. `./UCMerced_LandUse/Images`).
-2. Open `notebooks/ucm_fl_final.ipynb` and run all cells.
+| Dataset | Classes | Images | Resolution |
+|--------|--------|--------|------------|
+| EuroSAT | 10 | 27,000 | 64×64 |
+| UC Merced | 21 | 2,100 | 256×256 |
+| NWPU-RESISC45 | 45 | 31,500 | 256×256 |
 
-### NWPU-RESISC45 (script)
+### Dataset Characteristics
 
-1. From the **project root**, create `data/NWPU-RESISC45/train` and `data/NWPU-RESISC45/test` with one subfolder per class.
-2. In `scripts/newfed.py`, set `TRAIN_DATA_PATH` and `TEST_DATA_PATH` if your paths differ (paths are relative to project root).
-3. Run from project root:
+**EuroSAT**
+- Satellite imagery dataset
+- Based on Sentinel-2 satellite images
 
-```bash
-python scripts/newfed.py
-```
+**UC Merced**
+- High quality aerial scene dataset
+- Suitable for small-scale experiments
 
-Checkpoints are saved to `fl_checkpoint.pth` in the project root by default; to save into `models/`, set `CHECKPOINT_PATH = './models/fl_checkpoint.pth'` in the script. Re-running continues from the last round if the checkpoint exists.
+**NWPU-RESISC45**
+- Large-scale remote sensing scene dataset
+- Highly diverse scene categories
 
-## Configuration (typical)
+---
 
-- **NUM_CLIENTS**: 5–10
-- **NUM_ROUNDS**: 20–30
-- **LOCAL_EPOCHS**: 1–6 (lower can reduce client overfitting)
-- **BATCH_SIZE**: 8–16
-- **LEARNING_RATE**: ~0.001
+# Federated Learning Architecture
 
-Adjust these in the top of the script or notebook.
+The system follows a **server-client federated architecture**.
 
-## Report & Results
+### Training Workflow
 
-- Put your **project report** (e.g. PDF) and result **plots/tables** in the [**report/**](report/) folder.
-- Use [**report/RESULTS.md**](report/RESULTS.md) to summarize metrics (accuracy, F1, AUC) and link to any images.
-- Files in `report/` (PDF, PNG, MD) are tracked and pushed to GitHub.
+1. Server initializes the global model.
+2. The global model is sent to all clients.
+3. Each client trains the model locally on its private dataset.
+4. Clients send updated model weights to the server.
+5. Server aggregates updates using **Federated Averaging (FedAvg)**.
+6. The updated global model is redistributed to clients.
+7. Steps repeat for multiple communication rounds until convergence.
 
-## Model
+Important property:
 
-- Put your **trained model checkpoints** (`.pth` / `.pt`) in the [**models/**](models/) folder.
-- Checkpoints in `models/` are tracked and pushed (GitHub file size limit: 100 MB; use [Git LFS](https://git-lfs.github.com/) for larger files).
-- To save from a script into `models/`, set e.g. `CHECKPOINT_PATH = './models/fl_ucmerced_final.pth'` and run from the project root.
+**Raw data never leaves the client devices.**
 
-## License
+---
 
-This project is for educational and research use. Respect the license terms of the datasets (UC Merced, NWPU-RESISC45) when downloading and using them.
+# CNN Model Architecture
+
+A lightweight CNN is used to balance **performance and communication efficiency**.
+Input Image (3 × 224 × 224)
+
+Conv1 → 16 filters + MaxPool
+Conv2 → 32 filters + MaxPool
+Conv3 → 64 filters + MaxPool
+Conv4 → 128 filters + MaxPool
+
+Flatten
+
+Fully Connected Layer (512)
+
+
+Total parameters ≈ **13 million** depending on dataset classes.
+
+---
+
+# Federated Averaging (FedAvg)
+
+The global model is updated using weighted averaging of client updates.
+
+W_global = Σ (n_i / Σ n_j) * W_i
+
+
+Where:
+
+- `W_i` = model weights from client i  
+- `n_i` = number of samples on client i  
+- `K` = total number of clients  
+
+Clients with larger datasets contribute more to the global model.
+
+---
+
+# Experimental Setup
+
+### Environment
+
+- Python 3.8
+- PyTorch
+- NumPy
+- scikit-learn
+
+### Training Parameters
+
+| Parameter | Value |
+|----------|-------|
+| Optimizer | Adam |
+| Learning Rate | 0.001 |
+| Batch Size | 16–32 |
+| Local Epochs | 1–5 |
+
+### Communication Rounds
+
+| Dataset | Rounds |
+|--------|-------|
+| EuroSAT | 20 |
+| UC Merced | 28 |
+| NWPU-RESISC45 | 92 |
+
+---
+
+# Results
+
+### EuroSAT
+
+| Metric | Value |
+|------|------|
+Accuracy | 0.88 |
+F1 Score | 0.88 |
+AUC | 0.99 |
+
+The model converges quickly within **20 communication rounds**.
+
+---
+
+### NWPU-RESISC45
+
+| Metric | Value |
+|------|------|
+Accuracy | 0.73 – 0.74 |
+F1 Score | 0.74 |
+AUC | 0.98 – 0.99 |
+
+Higher dataset complexity requires **more training rounds**.
+
+---
+
+### UC Merced
+
+| Metric | Value |
+|------|------|
+Accuracy | 0.76 – 0.79 |
+F1 Score | 0.74 |
+AUC | 0.98 – 0.99 |
+
+The dataset is smaller and converges faster.
